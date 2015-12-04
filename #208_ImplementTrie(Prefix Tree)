@@ -1,0 +1,86 @@
+// Solution 1 --- 好好看看Trie树的学习笔记，然后实现一个基本的Trie树
+// 时间复杂度: Insert操作O(m), Search的操作也是O(m), startsWith的操作也是O(m)
+// 空间复杂度: O(26^i), i为Trie树的层数。
+
+class TrieNode {
+    // Initialize your data structure here.
+    char letter; // 存储这个节点的字符
+    boolean isWord; // 用于标记从根节点到达当前节点，即该节点相关的路径拼接的关键字字符串是否出现过，即是否有该关键字。      
+    TrieNode[] branch; // 用于存储下一级的分支，假设都是小写字母，因此size = 26
+                       // index->character: 0->'a', 1->'b', ....., 25->'z'
+
+    public TrieNode() {
+        branch = new TrieNode[26];
+    }
+    public TrieNode(char c){
+       branch = new TrieNode[26];
+       letter = c;
+    }
+}
+
+public class Trie {
+    private TrieNode root;
+
+    public Trie() {
+        root = new TrieNode();
+    }
+
+    // Inserts a word into the trie.
+    public void insert(String word) {
+        if( word == null || word.length() == 0 ){
+            return;
+        }
+        if( !search(word) ){
+            TrieNode tmp = root;
+            int length = word.length();
+            for(int i = 0; i < length; i++){
+                char c = word.charAt(i);
+                if( tmp.branch[c-'a'] == null ){
+                    TrieNode newNode = new TrieNode(c);
+                    tmp.branch[c-'a'] = newNode;
+                }
+                tmp = tmp.branch[c-'a'];
+            }
+            tmp.isWord = true;
+        }
+    }
+
+    // Returns if the word is in the trie.
+    public boolean search(String word) {
+        if( word == null || word.length() == 0 ){
+            return false;
+        } 
+        TrieNode tmp = root;
+        int length = word.length();
+        for(int i = 0; i < length; i++){
+            char c = word.charAt(i);
+            if( tmp.branch[c-'a'] == null ){
+                return false;
+            }
+            tmp = tmp.branch[c-'a'];
+        }
+        if( tmp.isWord == false ){
+            return false;
+        }
+        return true;
+    }
+
+    // Returns if there is any word in the trie
+    // that starts with the given prefix.
+    public boolean startsWith(String prefix) {
+        
+        if( prefix == null || prefix.length() == 0 ){
+            return false;
+        }
+        TrieNode tmp = root;
+        int length = prefix.length();
+        for(int i = 0; i < length; i++){
+            char c =prefix.charAt(i);
+            if( tmp.branch[c-'a'] == null ){
+                return false;
+            }
+            tmp = tmp.branch[c-'a'];
+        }
+        return true;
+    }
+}
